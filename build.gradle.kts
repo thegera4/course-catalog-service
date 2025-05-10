@@ -29,11 +29,14 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	// Database
 	runtimeOnly("com.h2database:h2")
-	runtimeOnly("org.postgresql:postgresql")
+	//runtimeOnly("org.postgresql:postgresql")
 	// Testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
+	testImplementation("io.mockk:mockk:1.10.4")
+	testImplementation("com.ninja-squad:springmockk:3.0.1")
 	// Logging
 	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 }
@@ -52,4 +55,12 @@ allOpen {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+sourceSets {
+	test {
+		java {
+			setSrcDirs(listOf("src/test/intg", "src/test/unit"))
+		}
+	}
 }
