@@ -3,12 +3,13 @@ package com.jgmedellin.course_catalog_service.service
 import com.jgmedellin.course_catalog_service.dto.CourseDTO
 import com.jgmedellin.course_catalog_service.entity.Course
 import com.jgmedellin.course_catalog_service.exception.CourseNotFoundException
+import com.jgmedellin.course_catalog_service.exception.InstructorNotValidException
 import com.jgmedellin.course_catalog_service.repository.CourseRepository
 import mu.KLogging
 import org.springframework.stereotype.Service
 
 @Service
-class CourseService(val courseRepository: CourseRepository) {
+class CourseService(val courseRepository: CourseRepository, val instructorService: InstructorService) {
 
     companion object : KLogging()
 
@@ -18,10 +19,29 @@ class CourseService(val courseRepository: CourseRepository) {
      * @return The saved course data transfer object list.
      */
     fun addCourses(courseDTOs: List<CourseDTO>): List<CourseDTO> {
-        val courseEntities = courseDTOs.map { Course(null,it.name,it.category) }
+        // Create a map of instructor IDs to Instructor objects
+        val instructorMap = courseDTOs.filter { it.instructorId != null }
+            .associate { courseDTO ->
+                val instructorOpt = instructorService.findByInstructorId(courseDTO.instructorId!!)
+                courseDTO.instructorId to instructorOpt.orElse(null)
+            }
+
+        // Check if any instructor is invalid
+        if (instructorMap.values.any { it == null }) {
+            throw InstructorNotValidException("Some instructors are not valid")
+        }
+
+        // If the instructor exists, proceed to save the course(s)
+        val courseEntities = courseDTOs.map {
+            Course(null,it.name,it.category, instructorMap[it.instructorId]!!)
+        }
         val savedEntities = courseRepository.saveAll(courseEntities)
         logger.info { "Successfully saved ${savedEntities.count()} new courses." }
-        return savedEntities.map { CourseDTO(it.id, it.name, it.category) }
+
+        // Return the saved courses as DTOs
+        return savedEntities.map {
+            CourseDTO(it.id, it.name, it.category, it.instructor!!.id)
+        }
     }
 
     /**

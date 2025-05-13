@@ -1,5 +1,6 @@
 package com.jgmedellin.course_catalog_service.exceptionhandler
 
+import com.jgmedellin.course_catalog_service.exception.InstructorNotValidException
 import jakarta.validation.ConstraintViolationException
 import mu.KLogging
 import org.springframework.http.HttpHeaders
@@ -42,6 +43,12 @@ class GlobalErrorHandler : ResponseEntityExceptionHandler() {
         ex.constraintViolations.forEach { violation -> errors[violation.propertyPath.toString()] = violation.message }
         println("errors: $errors")
         return errors.values.joinToString(", ")
+    }
+
+    @ExceptionHandler(InstructorNotValidException::class)
+    fun handleInstructorNotValidExceptions(ex: InstructorNotValidException, request: WebRequest): ResponseEntity<Any> {
+        println("Exception occurred: ${ex.message}")
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.message)
     }
 
     @ExceptionHandler(Exception::class)
