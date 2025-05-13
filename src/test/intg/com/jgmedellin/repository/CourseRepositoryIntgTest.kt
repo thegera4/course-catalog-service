@@ -3,7 +3,9 @@ package com.jgmedellin.repository
 import com.jgmedellin.course_catalog_service.CourseCatalogServiceApplication
 import com.jgmedellin.course_catalog_service.exceptionhandler.GlobalErrorHandler
 import com.jgmedellin.course_catalog_service.repository.CourseRepository
+import com.jgmedellin.course_catalog_service.repository.InstructorRepository
 import com.jgmedellin.util.courseEntityList
+import com.jgmedellin.util.instructorEntityList
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,10 +26,17 @@ class CourseRepositoryIntgTest {
     @Autowired
     lateinit var courseRepository: CourseRepository
 
+    @Autowired
+    lateinit var instructorRepository: InstructorRepository
+
     @BeforeEach
     fun setup() {
         courseRepository.deleteAll()
-        val courses = courseEntityList()
+
+        val instructors = instructorEntityList()
+        instructorRepository.saveAll(instructors)
+
+        val courses = courseEntityList(instructors)
         courseRepository.saveAll(courses)
     }
 

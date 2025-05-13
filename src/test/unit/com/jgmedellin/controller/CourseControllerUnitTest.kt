@@ -3,7 +3,6 @@ package com.jgmedellin.controller
 import com.jgmedellin.course_catalog_service.CourseCatalogServiceApplication
 import com.jgmedellin.course_catalog_service.controller.CourseController
 import com.jgmedellin.course_catalog_service.dto.CourseDTO
-import com.jgmedellin.course_catalog_service.entity.Course
 import com.jgmedellin.course_catalog_service.exceptionhandler.GlobalErrorHandler
 import com.jgmedellin.course_catalog_service.service.CourseService
 import com.ninjasquad.springmockk.MockkBean
@@ -33,7 +32,7 @@ class CourseControllerUnitTest {
 
     @Test
     fun addCourses() {
-        val courseDTOs = listOf(CourseDTO(1, "Kotlin Programming", "Development"))
+        val courseDTOs = listOf(CourseDTO(1, "Kotlin Programming", "Development", 1))
 
         every { courseServiceMock.addCourses(any()) } returns listOf(courseDTO(courseDTOs[0].id))
 
@@ -55,7 +54,7 @@ class CourseControllerUnitTest {
 
     @Test
     fun addCourses_validation() {
-        val courseDTOs = listOf(CourseDTO(null, "", ""))
+        val courseDTOs = listOf(CourseDTO(null, "", "", 1))
 
         every { courseServiceMock.addCourses(any()) } returns listOf(courseDTO(id = 1))
 
@@ -68,12 +67,12 @@ class CourseControllerUnitTest {
             .returnResult()
             .responseBody
 
-        assertEquals("Name cannot be blank, Category cannot be blank", response)
+        assertEquals("Course name cannot be blank, Course category cannot be blank", response)
     }
 
     @Test
     fun addCourses_runtimeException() {
-        val courseDTOs = listOf(CourseDTO(null, "Kotlin Programming", "Development"))
+        val courseDTOs = listOf(CourseDTO(null, "Kotlin Programming", "Development", 1))
 
         val errorMsg = "Unexpected error occurred"
         every { courseServiceMock.addCourses(any()) } throws RuntimeException(errorMsg)
@@ -114,8 +113,6 @@ class CourseControllerUnitTest {
 
     @Test
     fun updateCourse() {
-        val course = Course(null, "Kotlin Programming", "Development")
-
         every { courseServiceMock.updateCourse(any(), any()) } returns courseDTO(
             100, "Kotlin Programming 2", "Development")
 

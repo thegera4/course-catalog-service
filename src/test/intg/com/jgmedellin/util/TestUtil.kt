@@ -5,11 +5,12 @@ import com.jgmedellin.course_catalog_service.dto.InstructorDTO
 import com.jgmedellin.course_catalog_service.entity.Course
 import com.jgmedellin.course_catalog_service.entity.Instructor
 
-fun courseEntityList() = listOf(
-    Course(null, "UX/UI Basics", "Design"),
-    Course(null, "Python Programming", "Development"),
-    Course(null, "JavaScript Programming", "Development")
+fun courseEntityList(instructors: List<Instructor>) = listOf(
+    Course(null, "UX/UI Basics", "Design", instructors[1]),
+    Course(null, "Python Programming", "Development", instructors[0]),
+    Course(null, "JavaScript Programming", "Development", instructors[0]),
 )
+
 
 fun courseDTO(id: Int? =null, name: String ="UX/UI Basics", category: String ="Design") = CourseDTO(id,name,category)
 
