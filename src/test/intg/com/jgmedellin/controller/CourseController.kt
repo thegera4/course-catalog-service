@@ -5,6 +5,7 @@ import com.jgmedellin.course_catalog_service.dto.CourseDTO
 import com.jgmedellin.course_catalog_service.entity.Course
 import com.jgmedellin.course_catalog_service.repository.CourseRepository
 import com.jgmedellin.course_catalog_service.repository.InstructorRepository
+import com.jgmedellin.util.PostgreSQLContainerInitializer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,6 +17,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import com.jgmedellin.util.courseEntityList
 import com.jgmedellin.util.instructorEntityList
 import org.springframework.web.util.UriComponentsBuilder
+import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.collections.forEach
 import kotlin.test.assertEquals
 
@@ -25,7 +27,8 @@ import kotlin.test.assertEquals
 )
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-class CourseController {
+@Testcontainers
+class CourseController : PostgreSQLContainerInitializer() {
 
     @Autowired
     lateinit var webTestClient: WebTestClient
@@ -54,7 +57,7 @@ class CourseController {
 
         val courseDTOs = listOf(
             CourseDTO(null, "Building a REST API with Kotlin and SpringBoot",
-                "Development", instructor.id)
+                "Development", instructor?.id ?: 0),
         )
 
         val savedCourseDTOs = webTestClient.post()
@@ -116,7 +119,7 @@ class CourseController {
         courseRepository.save(course)
 
         val updatedCourseDTO = CourseDTO(null, "Advanced Kotlin Programming",
-            "Development", course.instructor!!.id)
+            "Development", course.instructor?.id ?: 0)
 
         val updatedCourse = webTestClient.put()
             .uri("/api/v1/courses/{id}", course.id)

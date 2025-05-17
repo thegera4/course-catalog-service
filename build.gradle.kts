@@ -19,6 +19,16 @@ repositories {
 	mavenCentral()
 }
 
+// Needed for Test Containers library //
+extra["testcontainersVersion"] = "1.21.0"
+
+dependencyManagement {
+	imports {
+		mavenBom("org.testcontainers:testcontainers-bom:${property("testcontainersVersion")}")
+	}
+}
+////////////////////////////////////////
+
 dependencies {
 	// Spring Boot
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -28,8 +38,8 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	// Database
-	runtimeOnly("com.h2database:h2")
-	//runtimeOnly("org.postgresql:postgresql")
+	//runtimeOnly("com.h2database:h2")
+	runtimeOnly("org.postgresql:postgresql")
 	// Testing
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -37,6 +47,9 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 	testImplementation("io.mockk:mockk:1.10.4")
 	testImplementation("com.ninja-squad:springmockk:3.0.1")
+	// Test Containers
+	testImplementation("org.testcontainers:junit-jupiter")
+	testImplementation("org.testcontainers:postgresql")
 	// Logging
 	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 }

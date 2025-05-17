@@ -20,11 +20,10 @@ class CourseService(val courseRepository: CourseRepository, val instructorServic
      */
     fun addCourses(courseDTOs: List<CourseDTO>): List<CourseDTO> {
         // Create a map of instructor IDs to Instructor objects
-        val instructorMap = courseDTOs.filter { it.instructorId != null }
-            .associate { courseDTO ->
-                val instructorOpt = instructorService.findByInstructorId(courseDTO.instructorId!!)
-                courseDTO.instructorId to instructorOpt.orElse(null)
-            }
+        val instructorMap = courseDTOs.associate { courseDTO ->
+            val instructorOpt = instructorService.findByInstructorId(courseDTO.instructorId)
+            courseDTO.instructorId to instructorOpt.orElse(null)
+        }
 
         // Check if any instructor is invalid
         if (instructorMap.values.any { it == null }) {
@@ -33,14 +32,14 @@ class CourseService(val courseRepository: CourseRepository, val instructorServic
 
         // If the instructor exists, proceed to save the course(s)
         val courseEntities = courseDTOs.map {
-            Course(null,it.name,it.category, instructorMap[it.instructorId]!!)
+            Course(null,it.name,it.category, instructorMap[it.instructorId])
         }
         val savedEntities = courseRepository.saveAll(courseEntities)
         logger.info { "Successfully saved ${savedEntities.count()} new courses." }
 
         // Return the saved courses as DTOs
         return savedEntities.map {
-            CourseDTO(it.id, it.name, it.category, it.instructor!!.id)
+            CourseDTO(it.id, it.name, it.category, it.instructor?.id ?: 0)
         }
     }
 
@@ -52,7 +51,7 @@ class CourseService(val courseRepository: CourseRepository, val instructorServic
      */
     fun retrieveAllCourses(courseName: String?): List<CourseDTO> {
         val courses = courseName?.let { courseRepository.findCoursesByName(courseName) } ?: courseRepository.findAll()
-        return courses.map { CourseDTO(it.id, it.name, it.category) }
+        return courses.map { CourseDTO(it.id, it.name, it.category, it.instructor?.id ?: 0) }
     }
 
     /**
@@ -69,7 +68,8 @@ class CourseService(val courseRepository: CourseRepository, val instructorServic
                 it.name = courseDTO.name // update the course properties
                 it.category = courseDTO.category // update the course properties
                 courseRepository.save(it) // save the updated course
-                CourseDTO(it.id, it.name, it.category) // we return the updated course
+                // return the updated course as DTO
+                CourseDTO(it.id, it.name, it.category, it.instructor?.id ?: 0)
             }
         } else {
             throw CourseNotFoundException("Course with ID $courseId not found")

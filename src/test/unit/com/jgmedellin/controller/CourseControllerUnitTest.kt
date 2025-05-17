@@ -116,7 +116,7 @@ class CourseControllerUnitTest {
         every { courseServiceMock.updateCourse(any(), any()) } returns courseDTO(
             100, "Kotlin Programming 2", "Development")
 
-        val updatedCourseDTO = CourseDTO(100, "Kotlin Programming", "Development")
+        val updatedCourseDTO = CourseDTO(100, "Kotlin Programming", "Development", 0)
 
         val updatedCourse = webTestClient.put()
             .uri("/api/v1/courses/{id}", 100)

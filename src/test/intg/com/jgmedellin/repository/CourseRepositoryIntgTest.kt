@@ -4,6 +4,7 @@ import com.jgmedellin.course_catalog_service.CourseCatalogServiceApplication
 import com.jgmedellin.course_catalog_service.exceptionhandler.GlobalErrorHandler
 import com.jgmedellin.course_catalog_service.repository.CourseRepository
 import com.jgmedellin.course_catalog_service.repository.InstructorRepository
+import com.jgmedellin.util.PostgreSQLContainerInitializer
 import com.jgmedellin.util.courseEntityList
 import com.jgmedellin.util.instructorEntityList
 import org.junit.jupiter.api.Assertions
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -21,7 +23,8 @@ import java.util.stream.Stream
 @DataJpaTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = [CourseCatalogServiceApplication::class, GlobalErrorHandler::class])
-class CourseRepositoryIntgTest {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class CourseRepositoryIntgTest : PostgreSQLContainerInitializer() {
 
     @Autowired
     lateinit var courseRepository: CourseRepository

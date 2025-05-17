@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import com.jgmedellin.util.*
+import org.testcontainers.junit.jupiter.Testcontainers
 import kotlin.collections.forEach
 
 @SpringBootTest(
@@ -20,7 +21,8 @@ import kotlin.collections.forEach
 )
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-class InstructorController {
+@Testcontainers
+class InstructorController : PostgreSQLContainerInitializer() {
 
     @Autowired
     lateinit var webTestClient: WebTestClient

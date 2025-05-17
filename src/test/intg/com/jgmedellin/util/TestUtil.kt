@@ -12,7 +12,7 @@ fun courseEntityList(instructors: List<Instructor>) = listOf(
 )
 
 
-fun courseDTO(id: Int? =null, name: String ="UX/UI Basics", category: String ="Design") = CourseDTO(id,name,category)
+fun courseDTO(id: Int? =null, name: String ="UX/UI Basics", category: String ="Design") = CourseDTO(id,name,category, 1)
 
 fun instructorEntityList() = listOf(Instructor(null, "John Doe"), Instructor(null, "Jane Smith"))
 

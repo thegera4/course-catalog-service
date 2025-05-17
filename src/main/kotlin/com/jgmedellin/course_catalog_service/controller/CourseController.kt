@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package com.jgmedellin.course_catalog_service.controller
 
 import com.jgmedellin.course_catalog_service.dto.CourseDTO
